@@ -1,0 +1,15 @@
+function [edges,center,maxxy,minxy] = edges_center(I)
+    I = rgb2gray(I);
+    I = imadjust(I);
+    ImB=medfilt2(I,[5 5]);
+    edges = edge(ImB,'sobel');
+    se = strel('disk',10);
+    EnhancedEdges = imdilate(edges, se);
+    [B] = bwboundaries(EnhancedEdges ,8,'noholes');
+    [maxcellsize,maxcellind] = max(cellfun(@numel,B));
+    maxxy = max(B{maxcellind});
+    minxy = min(B{maxcellind});
+    center = (maxxy + minxy) / 2;
+    temp = center(2);
+    center(2) = center(1);
+    center(1) = temp;
